@@ -15,7 +15,9 @@ If the Yeelight Service is found, an activity can be launched to control colour 
 This application has been tested on a Google Nexus 7 (2013 edition)
 
 Free aplication available for download from Google Play: 
-Coming soon...
+
+https://play.google.com/store/apps/details?id=com.tumaku.msmble
+
 
 Notes
 =====
