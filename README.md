@@ -3,6 +3,7 @@ MSMBle
 
 Android project created during the M-week (February 2014) at MakespaceMadrid to show how to manage Bluetooth Low Energy devices form an Android terminal.
 More information (in Spanish) available at:
+
 http://wiki.makespacemadrid.org/index.php?title=Bombilla_LED_de_colores_con_Bluetooth_Low_Energy
 
 A tutorial in English coming soon...
@@ -20,9 +21,11 @@ Notes
 =====
 
 + Based on the API released by Yeelight:
+
   http://www.yeelight.com/en_US/info/download
 
-+Based on the code created by Dave Smith (Double Encore):
++ Based on the code created by Dave Smith (Double Encore):
+
   https://github.com/devunwired/accessory-samples/tree/master/BluetoothGatt
-  http://www.doubleencore.com/2013/12/bluetooth-smart-for-android/
   
+  http://www.doubleencore.com/2013/12/bluetooth-smart-for-android/
