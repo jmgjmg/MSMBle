@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MSMBle</string>
+    <string name="scan">Scan</string>
+    <string name="stopScan">Stop Scan</string>
+    <string name="connManager">Connection Manager</string>
+    <string name="red">Red</string>
+    <string name="green">Green</string>
+    <string name="blue">Blue</string>
+    <string name="read">Read</string>
+    <string name="reset">Reset</string>
+    <string name="reconnect">Reconnect</string>
+    <string name="intensity">Intensity</string>
+    <string name="prefsFile">ConfigurationStorage</string>
+    <string name="controlYeelight">Control Yeelight Blue</string>
+</resources>

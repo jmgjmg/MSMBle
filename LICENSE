@@ -1,0 +1,13 @@
+Created by Javier Montaner  (twitter: @tumaku_) during M-week (February 2014) of MakeSpaceMadrid
+http://www.makespacemadrid.org
+@ 2014 Javier Montaner
+ 
+Licensed under the MIT Open Source License 
+http://opensource.org/licenses/MIT
+
+Based on the API released by Yeelight:
+http://www.yeelight.com/en_US/info/download
+
+Based on the code created by Dave Smith (Double Encore) distributed under MIT Open Source License
+https://github.com/devunwired/accessory-samples/tree/master/BluetoothGatt
+http://www.doubleencore.com/2013/12/bluetooth-smart-for-android/
