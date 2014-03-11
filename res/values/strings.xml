@@ -11,6 +11,15 @@
     <string name="reset">Reset</string>
     <string name="reconnect">Reconnect</string>
     <string name="intensity">Intensity</string>
+    <string name="button1">Button 1</string>
+    <string name="button2">Button 2</string>
+    <string name="temperatureTag">Temperature:</string>
+    <string name="temperature">Temperature</string>
+    <string name="humidityTag">Humidity:</string>
+    <string name="humidity">Humidity</string>
     <string name="prefsFile">ConfigurationStorage</string>
     <string name="controlYeelight">Control Yeelight Blue</string>
+    <string name="yeelight">yeelight</string>
+    <string name="sensortag">sensortag</string>
+    <string name="monitorSensorTag">Monitor SensorTag</string>
 </resources>

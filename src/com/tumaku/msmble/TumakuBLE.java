@@ -28,8 +28,13 @@
 
 package com.tumaku.msmble;
 
+import static java.util.UUID.fromString;
+
+import static java.lang.Math.pow;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 import android.bluetooth.BluetoothAdapter;
@@ -60,7 +65,11 @@ public class TumakuBLE {
 
 	public static final String WRITE_SUCCESS = "com.yeelight.blue.WRITE_SUCCESS";
 	
+	public static final String WRITE_DESCRIPTOR_SUCCESS = "com.yeelight.blue.WRITE_DESCRIPTOR_SUCCESS";
+	
 	public static final String READ_SUCCESS = "com.yeelight.blue.READ_SUCCESS";
+
+	public static final String NOTIFICATION = "com.yeelight.blue.NOTIICATION";
 
 	public static final String EXTRA_ADDRESS = "address";
 
@@ -68,7 +77,9 @@ public class TumakuBLE {
 
 	public static final String EXTRA_CHARACTERISTIC  = "characteristic";
 
-	public static final String EXTRA_VALUE = "address";
+	public static final String EXTRA_VALUE = "value";
+
+	public static final String EXTRA_VALUE_BYTE_ARRAY = "valueByteArray";
 
 	public static final String EXTRA_SCANNING = "scanning";
 
@@ -79,6 +90,20 @@ public class TumakuBLE {
 	public static final String EXTRA_RESULT  = "result";
 	
 	public static final String EXTRA_FULL_RESET = "fullreset";
+	
+
+    public static final String SENSORTAG_HUMIDITY_SERVICE = "f000aa20-0451-4000-b000-000000000000";
+    public static final String SENSORTAG_HUMIDITY_DATA = "f000aa21-0451-4000-b000-000000000000";
+    public static final String SENSORTAG_HUMIDITY_CONF = "f000aa22-0451-4000-b000-000000000000";// 0: disable, 1: enable
+    public static final String SENSORTAG_IR_TEMPERATURE_SERVICE = "f000aa00-0451-4000-b000-000000000000";
+    public static final String SENSORTAG_IR_TEMPERATURE_DATA = "f000aa01-0451-4000-b000-000000000000";
+    public static final String SENSORTAG_IR_TEMPERATURE_CONF = "f000aa02-0451-4000-b000-000000000000";// 0: disable, 1: enable
+
+    public static final String SENSORTAG_KEY_SERVICE = "0000ffe0-0000-1000-8000-00805f9b34fb";
+    public static final String SENSORTAG_KEY_DATA = "0000ffe1-0000-1000-8000-00805f9b34fb";
+
+    public static final String CONFIG_DESCRIPTOR = "00002902-0000-1000-8000-00805f9b34fb";
+	
 	
 	
 	private static BluetoothDevice mDevice;
@@ -217,11 +242,14 @@ public class TumakuBLE {
 
 	}
 	
-
 	public void write(String serviceUUID, String characteristicUUID, String data){
+		write(serviceUUID,characteristicUUID,data.getBytes());
+	}
+	
+	public void write(String serviceUUID, String characteristicUUID, byte[] data){
 		BluetoothGattCharacteristic characteristic = findCharacteristic(serviceUUID, characteristicUUID);	
 		if(characteristic!=null){
-			characteristic.setValue(data.getBytes());
+			characteristic.setValue(data);
 			mGatt.writeCharacteristic(characteristic);
 			if(Constant.DEBUG) Log.i("JMG","Write Characteristic " + characteristicUUID + " with value " + data);
 		} else {
@@ -230,7 +258,26 @@ public class TumakuBLE {
 		
 	}
 	
-	
+	public void enableNotifications(String serviceUUID, String characteristicUUID, boolean notificationFlag) {
+		BluetoothGattCharacteristic characteristic = findCharacteristic(serviceUUID, characteristicUUID);	
+		if(characteristic!=null){
+		    UUID CCC = UUID.fromString(CONFIG_DESCRIPTOR);
+		    mGatt.setCharacteristicNotification(characteristic, notificationFlag); //Enabled locally
+		    BluetoothGattDescriptor config = characteristic.getDescriptor(CCC);
+		    if (notificationFlag) {
+			    config.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);	    	
+		    } else {
+			    config.setValue(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);	    	
+		    }
+		    mGatt.writeDescriptor(config); //Enabled remotely		    
+			if(Constant.DEBUG) Log.i("JMG","Write Characteristic Notification " + characteristicUUID + " with value " + notificationFlag);
+		} else {
+			if(Constant.DEBUG) Log.i("JMG","Write Characteristic not found in device");
+		}
+
+	    
+	    
+	}	
 	
 	public class ServiceType {
 		private BluetoothGattService mService;
@@ -254,7 +301,61 @@ public class TumakuBLE {
           return stringBuilder.toString();
     }
 
+    public static double calcHumTmp(int rawT)
+    {
+      double v;
 
+      //-- calculate temperature [deg C] --
+      v = -46.85 + 175.72 *rawT/65536;
+      return v;
+    }
+
+    /*  Conversion algorithm, humidity */
+
+    public static double calcHumRel(int rawH)
+    {
+      double v;
+      rawH &= ~0x0003; // clear bits [1..0] (status bits)
+      //-- calculate relative humidity [%RH] --
+      v = -6.0 + 125.0 * rawH/65536; // RH= -6 + 125 * SRH/2^16
+      return v;
+    }
+    
+    public static double extractAmbientTemperature(int rawAmbientT) {
+        return rawAmbientT/ 128.0;
+    }
+
+    public static double extractTargetTemperature(int rawT, double ambientT) {
+    	    
+        double Vobj2 = rawT;
+        Vobj2 *= 0.00000015625; 
+    	    
+        double Tdie = ambientT + 273.15;
+    	    
+        double S0 = 5.593E-14;	// Calibration factor
+        double a1 = 1.75E-3;
+        double a2 = -1.678E-5;
+        double b0 = -2.94E-5;
+        double b1 = -5.7E-7;
+        double b2 = 4.63E-9;
+        double c2 = 13.4;
+        double Tref = 298.15;
+        double S = S0*(1+a1*(Tdie - Tref)+a2*pow((Tdie - Tref),2));
+        double Vos = b0 + b1*(Tdie - Tref) + b2*pow((Tdie - Tref),2);
+        double fObj = (Vobj2 - Vos) + c2*pow((Vobj2 - Vos),2);
+        double tObj = pow(pow(Tdie,4) + (fObj/S),.25);
+    	    
+        return tObj - 273.15;
+    }
+    
+    
+    
+    public static int shortUnsignedAtOffset(byte[]value, int offset) {
+        int lowerByte = value[offset];
+        int upperByte = value[offset+1];
+
+        return (upperByte << 8) + lowerByte;
+    }
 	
 	
 	public class MyCallBack extends BluetoothGattCallback{
@@ -347,6 +448,7 @@ public class TumakuBLE {
 			Intent intent = new Intent(READ_SUCCESS);
 			intent.putExtra(EXTRA_CHARACTERISTIC, characteristic.getUuid().toString());
 			intent.putExtra(EXTRA_VALUE, bytesToString(characteristic.getValue()));
+			intent.putExtra(EXTRA_VALUE_BYTE_ARRAY, characteristic.getValue());
 			mContext.sendBroadcast(intent);	
 		}
 		
@@ -357,10 +459,14 @@ public class TumakuBLE {
 			super.onCharacteristicChanged(gatt, characteristic);
 			String uuid = characteristic.getUuid().toString();
 			if(Constant.DEBUG){
-				Log.i("JMG", "NOTIFICATION onCharacteristicChanged for characteristic " + uuid + 
-						" value: " + bytesToString(characteristic.getValue()));
+				//Log.i("JMG", "NOTIFICATION onCharacteristicChanged for characteristic " + uuid + 
+				//		" value: " + bytesToString(characteristic.getValue()));
 			}
-			//TODO send broadcast message
+			Intent intent = new Intent(NOTIFICATION);
+			intent.putExtra(EXTRA_CHARACTERISTIC, characteristic.getUuid().toString());
+			intent.putExtra(EXTRA_VALUE, bytesToString(characteristic.getValue()));
+			intent.putExtra(EXTRA_VALUE_BYTE_ARRAY, characteristic.getValue());
+			mContext.sendBroadcast(intent);	
 		}
 		
 		
@@ -395,7 +501,11 @@ public class TumakuBLE {
 			// TODO Auto-generated method stub
 			super.onDescriptorWrite(gatt, descriptor, status);
 			if(Constant.DEBUG)
-				Log.i("JMG", "onDescriptorWrite "+ descriptor.getUuid().toString() + " status: " + status);		
+				Log.i("JMG", "onDescriptorWrite "+ descriptor.getUuid().toString() + " - characteristic: " + 
+					descriptor.getCharacteristic().getUuid().toString() + " - Status: " + status);		
+			Intent intent = new Intent(WRITE_DESCRIPTOR_SUCCESS);
+			intent.putExtra(EXTRA_CHARACTERISTIC, descriptor.getCharacteristic().getUuid().toString());
+			mContext.sendBroadcast(intent);	
 		}
 	}
 

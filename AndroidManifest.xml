@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.tumaku.msmble"
-    android:versionCode="2"
-    android:versionName="1.0.1" >
+    android:versionCode="3"
+    android:versionName="1.1.0" >
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -41,7 +41,11 @@
             android:name="com.tumaku.msmble.ControlLightActivity"
             android:label="@string/controlYeelight" >
          </activity>        
-         <receiver android:name=".MessageReceiver" android:enabled="true" >
+        <activity
+            android:name="com.tumaku.msmble.SensorTagActivity"
+            android:label="@string/monitorSensorTag" >
+         </activity>        
+        <receiver android:name=".MessageReceiver" android:enabled="true" >
             <intent-filter>
                 <action android:name="com.yeelight.DEVICE_FOUND"></action>
             </intent-filter>

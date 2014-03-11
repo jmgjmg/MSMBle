@@ -61,6 +61,7 @@ public class DeviceActivity extends ListActivity
 	private BLEDeviceBroadcastReceiver mBroadcastReceiver;
 	private List <TumakuBLE.ServiceType> mServices=null;
 	private ListView mListView;
+	private TextView mHeaderText;
 	private MySimpleArrayAdapter mAdapter=null;
 	private Context mContext=null;
 	private String mAddress;
@@ -80,9 +81,10 @@ public class DeviceActivity extends ListActivity
 		super.onCreate(savedInstanceState);
 		Log.i("JMG","DeviceActivity triggered OnCreate()");
 		mContext=this;
+        setContentView(R.layout.device_list);           
 		mBroadcastReceiver= new BLEDeviceBroadcastReceiver();
+		mHeaderText= (TextView) findViewById(R.id.header);
 		mServices=new ArrayList<TumakuBLE.ServiceType>();
-		//mTumakuBLE= TumakuBLE.getInstance(this);
 		mTumakuBLE=((TumakuBLEApplication)getApplication()).getTumakuBLEInstance(this);
 
 		mAddress=getIntent().getStringExtra(TumakuBLE.EXTRA_ADDRESS);
@@ -107,10 +109,10 @@ public class DeviceActivity extends ListActivity
     		Log.i("JMG", "Device name: "+ mDeviceName);
     	}
 
-		setTitle("Device Name: "+ mDeviceName + " - Addresss: " + mAddress);
+		mHeaderText.setText("Device Name: "+ mDeviceName + " - Addresss: " + mAddress);
 		mState=STATE_DUMMY;
 		mTumakuBLE.setDeviceAddress(mAddress);
-				
+		
         mListView = getListView();
         mAdapter=new MySimpleArrayAdapter(this, mServices);
         mListView.setAdapter(mAdapter);
@@ -230,7 +232,7 @@ public class DeviceActivity extends ListActivity
 	        		stateString="Disconnecting";
 	        		break;
 	        	}
-	        	((Activity)mContext).setTitle("State: " + stateString + " - Addresss: " + mAddress + "  - Device Name: "+ mDeviceName);	        
+	        	mHeaderText.setText("Addr: " + mAddress + "  - Name: "+ mDeviceName+ "  - State: " + stateString);	        
 	        }
 		}
        );
@@ -253,6 +255,9 @@ public class DeviceActivity extends ListActivity
   	    String serviceUUID=mServices.get(position).getService().getUuid().toString();
   	    serviceText.setText(serviceUUID);
   	    if (serviceUUID.equalsIgnoreCase(TumakuBLE.YEELIGHT_SERVICE)) rowView.setBackgroundColor(Color.GREEN);
+  	    if (serviceUUID.equalsIgnoreCase(TumakuBLE.SENSORTAG_HUMIDITY_SERVICE)) rowView.setBackgroundColor(Color.RED);
+  	    if (serviceUUID.equalsIgnoreCase(TumakuBLE.SENSORTAG_KEY_SERVICE)) rowView.setBackgroundColor(Color.RED);
+  	    if (serviceUUID.equalsIgnoreCase(TumakuBLE.SENSORTAG_IR_TEMPERATURE_SERVICE)) rowView.setBackgroundColor(Color.RED);
   	  	serviceText.setTypeface(null, Typeface.BOLD);
   	  	String characteristicsString ="";
   	  	for (BluetoothGattCharacteristic characteristicInList : mServices.get(position).getCharacteristics()){

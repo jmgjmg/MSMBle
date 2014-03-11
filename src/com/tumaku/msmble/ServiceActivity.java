@@ -89,9 +89,19 @@ public class ServiceActivity extends ListActivity
     public void onItemClick(AdapterView<?> adapter, View view,
                 int position, long id) {     	
 	    if (Constant.DEBUG) Log.i("JMG", "Selected characteristic " + mCharacteristicList.get(position).getUuid().toString());
-	    if (mCharacteristicList.get(position).getUuid().toString().equalsIgnoreCase(TumakuBLE.CHARACTERISTIC_CONTROL)) {
+	    String selectedCharacteristic=mCharacteristicList.get(position).getUuid().toString();
+	    if (selectedCharacteristic.equalsIgnoreCase(TumakuBLE.CHARACTERISTIC_CONTROL)) {
 		    if (Constant.DEBUG) Log.i("JMG", "Characteristic_Control selected. Launch ControlLight activity");
 	    	Intent intentActivity= new Intent(mContext, ControlLightActivity.class);
+	    	intentActivity.putExtra(TumakuBLE.EXTRA_ADDRESS,mTumakuBLE.getDeviceAddress());
+	    	mContext.startActivity(intentActivity);	   
+	    } if ((selectedCharacteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_HUMIDITY_CONF))||
+		    	  (selectedCharacteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_HUMIDITY_DATA))||
+		    	  (selectedCharacteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_IR_TEMPERATURE_DATA))||
+		    	  (selectedCharacteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_IR_TEMPERATURE_DATA))||
+	    	  (selectedCharacteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_KEY_DATA))) {
+		    if (Constant.DEBUG) Log.i("JMG", "SensorTag Characteristic selected. Launch SensorTag activity");
+	    	Intent intentActivity= new Intent(mContext, SensorTagActivity.class);
 	    	intentActivity.putExtra(TumakuBLE.EXTRA_ADDRESS,mTumakuBLE.getDeviceAddress());
 	    	mContext.startActivity(intentActivity);	   
 	    } else {
@@ -119,6 +129,11 @@ public class ServiceActivity extends ListActivity
   	    String characteristic =mCharacteristicList.get(position).getUuid().toString();
   	    serviceText.setText(characteristic);
   	    if (characteristic.equalsIgnoreCase(TumakuBLE.CHARACTERISTIC_CONTROL)) rowView.setBackgroundColor(Color.GREEN);
+  	    if (characteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_HUMIDITY_DATA)) rowView.setBackgroundColor(Color.RED);
+  	    if (characteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_HUMIDITY_CONF)) rowView.setBackgroundColor(Color.RED);
+  	    if (characteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_KEY_DATA)) rowView.setBackgroundColor(Color.RED);
+  	    if (characteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_IR_TEMPERATURE_DATA)) rowView.setBackgroundColor(Color.RED);
+  	    if (characteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_IR_TEMPERATURE_CONF)) rowView.setBackgroundColor(Color.RED);
   	    return rowView;
   	  }
   	} 

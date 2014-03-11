@@ -233,7 +233,12 @@ public class MainActivity extends ListActivity
   	    nameText.setText(name);
   	    nameText.setTypeface(null, Typeface.BOLD);
   	    addressText.setText(mDeviceList.get(position).getAddress());
-  	    if (name.toLowerCase().contains("yeelight")) rowView.setBackgroundColor(Color.GREEN);
+  	    if (name.toLowerCase().contains(mContext.getResources().getString(R.string.yeelight))) {
+  	    	rowView.setBackgroundColor(Color.GREEN);
+  	    }
+  	    if (name.toLowerCase().contains(mContext.getResources().getString(R.string.sensortag))) {
+  	    	rowView.setBackgroundColor(Color.RED);
+  	    }
   	    return rowView;
   	  }
   	} 

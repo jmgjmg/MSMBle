@@ -311,7 +311,7 @@ public class ControlLightActivity extends Activity implements OnSeekBarChangeLis
 	    	   String fullReset=intent.getStringExtra(TumakuBLE.EXTRA_FULL_RESET);
 	    	   if (fullReset!=null){
 			       if (Constant.DEBUG) Log.i("JMG","DEVICE_DISCONNECTED message received with full reset flag");
-	    		   Toast.makeText(mContext, "Urecoverable BT error received. Launching full reset", Toast.LENGTH_SHORT).show();    
+	    		   Toast.makeText(mContext, "Unrecoverable BT error received. Launching full reset", Toast.LENGTH_SHORT).show();    
 	        	   mState2=STATE2_CONNECT;
 	       		   mTumakuBLE.resetTumakuBLE();
 	       		   mTumakuBLE.setDeviceAddress(mDeviceAddress);
