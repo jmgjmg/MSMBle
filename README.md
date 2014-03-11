@@ -10,7 +10,9 @@ A tutorial in English coming soon...
 
 
 The application scans for any BLE device and its services and characteristics.
+
 If the Yeelight Service is found, an activity can be launched to control colour and intensity of Yeelight Blue bulb
+
 If  SensorTag services are found, an activity can be launched to visualise the state of the buttons, ambient temperature (IR Temperature sensor) 
 and humidity from the SensorTag.
 
