@@ -258,7 +258,9 @@ public class DeviceActivity extends ListActivity
   	    if (serviceUUID.equalsIgnoreCase(TumakuBLE.SENSORTAG_HUMIDITY_SERVICE)) rowView.setBackgroundColor(Color.RED);
   	    if (serviceUUID.equalsIgnoreCase(TumakuBLE.SENSORTAG_KEY_SERVICE)) rowView.setBackgroundColor(Color.RED);
   	    if (serviceUUID.equalsIgnoreCase(TumakuBLE.SENSORTAG_IR_TEMPERATURE_SERVICE)) rowView.setBackgroundColor(Color.RED);
-  	  	serviceText.setTypeface(null, Typeface.BOLD);
+  	    if (serviceUUID.equalsIgnoreCase(TumakuBLE.TETHERCELL_SERVICE)) rowView.setBackgroundColor(Color.BLUE);
+
+  	    serviceText.setTypeface(null, Typeface.BOLD);
   	  	String characteristicsString ="";
   	  	for (BluetoothGattCharacteristic characteristicInList : mServices.get(position).getCharacteristics()){
   	  		characteristicsString+=characteristicInList.getUuid().toString()+"\n";

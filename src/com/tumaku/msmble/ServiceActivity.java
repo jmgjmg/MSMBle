@@ -95,17 +95,28 @@ public class ServiceActivity extends ListActivity
 	    	Intent intentActivity= new Intent(mContext, ControlLightActivity.class);
 	    	intentActivity.putExtra(TumakuBLE.EXTRA_ADDRESS,mTumakuBLE.getDeviceAddress());
 	    	mContext.startActivity(intentActivity);	   
-	    } if ((selectedCharacteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_HUMIDITY_CONF))||
+	    } else {
+	    	if ((selectedCharacteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_HUMIDITY_CONF))||
 		    	  (selectedCharacteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_HUMIDITY_DATA))||
 		    	  (selectedCharacteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_IR_TEMPERATURE_DATA))||
-		    	  (selectedCharacteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_IR_TEMPERATURE_DATA))||
+		    	  (selectedCharacteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_IR_TEMPERATURE_CONF))||
 	    	  (selectedCharacteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_KEY_DATA))) {
-		    if (Constant.DEBUG) Log.i("JMG", "SensorTag Characteristic selected. Launch SensorTag activity");
-	    	Intent intentActivity= new Intent(mContext, SensorTagActivity.class);
-	    	intentActivity.putExtra(TumakuBLE.EXTRA_ADDRESS,mTumakuBLE.getDeviceAddress());
-	    	mContext.startActivity(intentActivity);	   
-	    } else {
-    	    Toast.makeText(this, "No management window defined for characteristic " + mCharacteristicList.get(position), Toast.LENGTH_SHORT).show();    	    		    	
+			    if (Constant.DEBUG) Log.i("JMG", "SensorTag Characteristic selected. Launch SensorTag activity");
+		    	Intent intentActivity= new Intent(mContext, SensorTagActivity.class);
+		    	intentActivity.putExtra(TumakuBLE.EXTRA_ADDRESS,mTumakuBLE.getDeviceAddress());
+		    	mContext.startActivity(intentActivity);	   
+	    	} else {
+		    	if ((selectedCharacteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_AUTH_PIN))||
+		    		(selectedCharacteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_VOLTAGE))||
+		    		(selectedCharacteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_STATE))) {
+				    if (Constant.DEBUG) Log.i("JMG", "Tethercell Characteristic selected. Launch Tethercell activity");
+			    	Intent intentActivity= new Intent(mContext, TethercellActivity.class);
+			    	intentActivity.putExtra(TumakuBLE.EXTRA_ADDRESS,mTumakuBLE.getDeviceAddress());
+			    	mContext.startActivity(intentActivity);	   	    		
+		    	} else {
+		    		Toast.makeText(this, "No management window defined for characteristic " + mCharacteristicList.get(position), Toast.LENGTH_SHORT).show();  
+		    	}
+	    	}
 	    }
     }
 	
@@ -134,6 +145,9 @@ public class ServiceActivity extends ListActivity
   	    if (characteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_KEY_DATA)) rowView.setBackgroundColor(Color.RED);
   	    if (characteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_IR_TEMPERATURE_DATA)) rowView.setBackgroundColor(Color.RED);
   	    if (characteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_IR_TEMPERATURE_CONF)) rowView.setBackgroundColor(Color.RED);
+  	    if (characteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_AUTH_PIN)) rowView.setBackgroundColor(Color.BLUE);
+  	    if (characteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_VOLTAGE)) rowView.setBackgroundColor(Color.BLUE);
+  	    if (characteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_STATE)) rowView.setBackgroundColor(Color.BLUE);
   	    return rowView;
   	  }
   	} 

@@ -184,7 +184,7 @@ public class MainActivity extends ListActivity
     	    if (Constant.DEBUG) Log.i("JMG", "Start scanning for BLE devices...");
     	    mTumakuBLE.startLeScan();
     	    //automatically stop LE scan after 5 seconds
-	    	mHandler.postDelayed(mStopRunnable, 5000); 
+	    	mHandler.postDelayed(mStopRunnable, 30000); 
     	}
     }
 

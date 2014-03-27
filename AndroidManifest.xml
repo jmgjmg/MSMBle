@@ -45,6 +45,10 @@
             android:name="com.tumaku.msmble.SensorTagActivity"
             android:label="@string/monitorSensorTag" >
          </activity>        
+         <activity
+            android:name="com.tumaku.msmble.TethercellActivity"
+            android:label="@string/monitorTethercell" >
+         </activity>        
         <receiver android:name=".MessageReceiver" android:enabled="true" >
             <intent-filter>
                 <action android:name="com.yeelight.DEVICE_FOUND"></action>

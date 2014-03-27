@@ -22,4 +22,9 @@
     <string name="yeelight">yeelight</string>
     <string name="sensortag">sensortag</string>
     <string name="monitorSensorTag">Monitor SensorTag</string>
+    <string name="monitorTethercell">Monitor Tethercell</string>
+    <string name="voltageTag">Voltage (mV): </string>
+    <string name="stateTag">State: </string>
+    <string name="periodTag">Advertising Period (msec): </string>
+    <string name="utcTag">UTC Time: </string>
 </resources>

@@ -104,6 +104,12 @@ public class TumakuBLE {
 
     public static final String CONFIG_DESCRIPTOR = "00002902-0000-1000-8000-00805f9b34fb";
 	
+    public static final String TETHERCELL_SERVICE = "5ec0fff0-3cf2-a682-e211-2af96efdf667";
+    public static final String TETHERCELL_AUTH_PIN = "5ec0fffc-3cf2-a682-e211-2af96efdf667";
+    public static final String TETHERCELL_VOLTAGE = "5ec0fff3-3cf2-a682-e211-2af96efdf667";
+    public static final String TETHERCELL_STATE = "5ec0fff2-3cf2-a682-e211-2af96efdf667";
+    public static final String TETHERCELL_UTC = "5ec0fffa-3cf2-a682-e211-2af96efdf667";
+    public static final String TETHERCELL_PERIOD = "5ec0fffb-3cf2-a682-e211-2af96efdf667";
 	
 	
 	private static BluetoothDevice mDevice;
