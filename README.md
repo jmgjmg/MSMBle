@@ -16,6 +16,8 @@ If the Yeelight Service is found, an activity can be launched to control colour 
 If  SensorTag services are found, an activity can be launched to visualise the state of the buttons, ambient temperature (IR Temperature sensor) 
 and humidity from the SensorTag.
 
+If Tethercell service is found, an activity can be launched to change the state (OFF/ON) of the Tethercell battery and visualise its characterisctics
+
 This application has been tested on a Google Nexus 7 (2013 edition)
 
 Free aplication available for download from Google Play: 
