@@ -27,4 +27,11 @@
     <string name="stateTag">State: </string>
     <string name="periodTag">Advertising Period (msec): </string>
     <string name="utcTag">UTC Time: </string>
+    <string name="timerTag">Timer: </string>
+    <string name="start_in_minutes">Start</string>
+    <string name="duration_in_minutes">Duration</string>
+    <string name="repeat_in_minutes">Repeat</string>
+    <string name="values_in_minutes">(Values in minutes)</string>
+    <string name="setTimer">Set Timer</string>
+    
 </resources>

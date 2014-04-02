@@ -24,35 +24,24 @@
  */
 package com.tumaku.msmble;
 
+import java.util.ArrayList;
 import java.util.List;
-
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.Typeface;
-import android.media.ToneGenerator;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 
 public class TethercellActivity extends Activity {
 	
@@ -78,20 +67,33 @@ public class TethercellActivity extends Activity {
 	private final static int WSTATE_READ_STATE=4;
 	private final static int WSTATE_READ_PERIOD=5;
 	private final static int WSTATE_READ_UTC=6;
-	private final static int WSTATE_DUMMY=7;
-	private final static int WSTATE_TOGGLE_STATE=8;
+	private final static int WSTATE_READ_TIMER_INDEX=7;
+	private final static int WSTATE_READ_TIMER=8;
+	private final static int WSTATE_DUMMY=9;
+	private final static int WSTATE_TOGGLE_STATE=10;
+	private final static int WSTATE_WRITE_STATE=11;
+	private final static int WSTATE_WRITE_PERIOD=12;
+	private final static int WSTATE_WRITE_UTC=13;
+	private final static int WSTATE_WRITE_TIMER_INDEX=14;
+	private final static int WSTATE_WRITE_TIMER=15;
+	
 	private final static byte[] TETHERCELL_PIN ={0x00,0x00,0x00,0x00};
 
-	
 	private TextView mTextVoltage;
 	private TextView mTextState;
 	private CheckBox mCheckBoxState;
 	private TextView mTextPeriod;
 	private TextView mTextUtc;
+	private TextView mTextTimerIndex;
+	private TextView mTextTimer;
 	private TextView mTextInfo;
 	private TextView mTextNotification;
 	private Button mButtonRead;
 	private Button mButtonReset;
+	private Spinner mSpinnerStart;
+	private Spinner mSpinnerDuration;
+	private Spinner mSpinnerRepeat;
+	private Button mButtonSetTimer;
 
 	private Context mContext;
 	private TethercellBLEBroadcastReceiver mBroadcastReceiver;
@@ -99,7 +101,18 @@ public class TethercellActivity extends Activity {
 	private int mState=0;
 	
 	private TumakuBLE  mTumakuBLE=null;
+	
+	
+    byte [] mTimerValue= new byte[]{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,(byte)0x00,0x00,0x00,0x00,0x00};
+    // byte [] timerValue= new byte[]{0x20,0x00,0x00,0x00,0x40,0x00,0x00,0x00,(byte)0x80,0x00,0x00,0x00,0x01};
+    // BYTES 0-3 uint32 Start time (less significant byte first) 0x20 0x00 0x00 0x00   -> switch on at 32 seconds UTC time
+    // BYTES 4-7 uint32 On Time (less significant byte first) 0x40 0x00 0x00 0x00   -> keep on for 64 seconds
+    // BYTES 8-11 uint32 Repeat Timer (less significant byte first) 0x80 0x00 0x00 0x00   -> repeat after 128 seconds
+    // BYTE 12 uint8 On Flag 0x00  -> this timer is currently forcing the switch to be on 
 
+    byte mTimerIndex= (byte)0x02;
+    boolean mSwitchState=false;
+    
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,11 +132,19 @@ public class TethercellActivity extends Activity {
         mCheckBoxState.setChecked(false);
         mTextPeriod = (TextView) findViewById(R.id.textPeriod);
         mTextUtc = (TextView) findViewById(R.id.textUtc);
+        mTextTimerIndex = (TextView) findViewById(R.id.textTimerIndex);
+        mTextTimer = (TextView) findViewById(R.id.textTimer);
         mTextInfo=(TextView) findViewById(R.id.textInfo);
         mTextNotification=(TextView) findViewById(R.id.textNotification);
         mButtonRead= (Button) findViewById(R.id.buttonRead);
         mButtonReset= (Button) findViewById(R.id.buttonReset);
-
+        mSpinnerStart= (Spinner) findViewById(R.id.spinnerStart);
+        initialiseSpinner(mSpinnerStart);
+        mSpinnerDuration= (Spinner) findViewById(R.id.spinnerDuration);
+        initialiseSpinner(mSpinnerDuration);
+        mSpinnerRepeat= (Spinner) findViewById(R.id.spinnerRepeat);
+        initialiseSpinner(mSpinnerRepeat);
+        mButtonSetTimer= (Button) findViewById(R.id.buttonSetTimer);
 
         mCheckBoxState.setOnClickListener(new OnClickListener() {     		 
         		      @Override
@@ -135,6 +156,19 @@ public class TethercellActivity extends Activity {
         		      }
         		    });
 
+        mButtonSetTimer.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+        	    if ((mState==WSTATE_DUMMY)) {
+        	    	setTimerArray();
+    	    		mSpinnerStart.setSelection(0);
+    	    		mSpinnerDuration.setSelection(0);
+    	    		mSpinnerRepeat.setSelection(0);
+	        	    mState=WSTATE_WRITE_STATE;
+	        	    nextState();  
+        	    }
+            }
+        });
+        
         
         mButtonRead.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -184,8 +218,54 @@ public class TethercellActivity extends Activity {
         this.unregisterReceiver(this.mBroadcastReceiver);      
 	}
 	
-	
+	private void initialiseSpinner(Spinner spinner) {
+    	List<Integer> list = new ArrayList<Integer>();   	
+    	list.add(0);
+    	list.add(1);
+    	list.add(2);
+    	list.add(3);
+    	list.add(4);
+    	list.add(5);
+    	ArrayAdapter<Integer> dataAdapter = new ArrayAdapter<Integer>(this,
+    		android.R.layout.simple_spinner_item, list);
+    	dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    	spinner.setAdapter(dataAdapter);		
+	}
+			
+	private void setTimerArray(){
+		mSwitchState=false;
+		int startSeconds= (Integer)mSpinnerStart.getSelectedItem() *60;
+		int durationSeconds=(Integer)mSpinnerDuration.getSelectedItem() *60;
+		int repeatSeconds=(Integer)mSpinnerRepeat.getSelectedItem() *60;
+
+    	if (startSeconds==0) { //battery should start on
+    		startSeconds=1;
+    		mSwitchState=true;
+    	}
+    	
+		if (repeatSeconds!=0){ //if repetition is defined, the period is computed as the repeat value plus the duration value
+			repeatSeconds+=durationSeconds;
+		}
+
+
+    	if (durationSeconds==0) { //in any case, a duration of 0 resets the timer and switches off
+            Toast.makeText(mContext, "Timer cleared", Toast.LENGTH_SHORT).show(); 
+            startSeconds=0;
+            repeatSeconds=0;
+            mSwitchState=false;
+    	}
 		
+		mTimerValue[0]=(byte) (startSeconds%256);
+		mTimerValue[1]=(byte) (startSeconds/256);
+		mTimerValue[4]=(byte) (durationSeconds%256);
+		mTimerValue[5]=(byte) (durationSeconds/256);
+		mTimerValue[8]=(byte) (repeatSeconds%256);
+		mTimerValue[9]=(byte) (repeatSeconds/256);
+		mTimerValue[12]=(byte)0;		// always we indicate that we start with the switch off 
+										// not sure for the case when (mSwitchState==true)
+	}
+	
+	
 		protected void nextState(){
 			switch(mState) {			   
 			   case (WSTATE_CONNECT):
@@ -201,7 +281,7 @@ public class TethercellActivity extends Activity {
 		   	       mTumakuBLE.write(TumakuBLE.TETHERCELL_SERVICE,TumakuBLE.TETHERCELL_AUTH_PIN, TETHERCELL_PIN);
 				   break;
 			   case(WSTATE_READ_VOLTAGE):
-			       if (Constant.DEBUG) Log.i("JMG","State Read Voltge");
+			       if (Constant.DEBUG) Log.i("JMG","State Read Voltage");
 		   	   	   mTumakuBLE.read(TumakuBLE.TETHERCELL_SERVICE,TumakuBLE.TETHERCELL_VOLTAGE);
 				   break;
 			   case(WSTATE_READ_STATE):
@@ -209,23 +289,60 @@ public class TethercellActivity extends Activity {
 			   	   mTumakuBLE.read(TumakuBLE.TETHERCELL_SERVICE,TumakuBLE.TETHERCELL_STATE);
 				   break;
 			   case(WSTATE_READ_PERIOD):
-			       if (Constant.DEBUG) Log.i("JMG","State Read State");
+			       if (Constant.DEBUG) Log.i("JMG","State Read Period");
 			   	   mTumakuBLE.read(TumakuBLE.TETHERCELL_SERVICE,TumakuBLE.TETHERCELL_PERIOD);
 				   break;
 			   case(WSTATE_READ_UTC):
-			       if (Constant.DEBUG) Log.i("JMG","State Read State");
+			       if (Constant.DEBUG) Log.i("JMG","State Read UTC");
 			   	   mTumakuBLE.read(TumakuBLE.TETHERCELL_SERVICE,TumakuBLE.TETHERCELL_UTC);
+				   break;
+			   case(WSTATE_READ_TIMER_INDEX):
+			       if (Constant.DEBUG) Log.i("JMG","State Read State");
+			   	   mTumakuBLE.read(TumakuBLE.TETHERCELL_SERVICE,TumakuBLE.TETHERCELL_TIMER_ARRAY_INDEX);
+				   break;
+			   case(WSTATE_READ_TIMER):
+			       if (Constant.DEBUG) Log.i("JMG","State Read State");
+			   	   mTumakuBLE.read(TumakuBLE.TETHERCELL_SERVICE,TumakuBLE.TETHERCELL_TIMER_ARRAY);
 				   break;
 			   case(WSTATE_TOGGLE_STATE):
 				   byte newState=0x00;
 				   if (mCheckBoxState.isChecked()) {
 					   newState=0x01;
 				   }
-			       if (Constant.DEBUG) Log.i("JMG","State Write State" + Byte.toString(newState));
+			       if (Constant.DEBUG) Log.i("JMG","State Toggle State" + Byte.toString(newState));
 		   	       mTumakuBLE.write(TumakuBLE.TETHERCELL_SERVICE,TumakuBLE.TETHERCELL_STATE, new byte[]{newState});
-		   	       //mTumakuBLE.write(TumakuBLE.TETHERCELL_SERVICE,TumakuBLE.TETHERCELL_PERIOD, new byte[]{0x40,0x06}); //Set advertsing interval to 1 second
 				   break;
-				   
+
+			   case(WSTATE_WRITE_STATE):
+				   byte newByteState=0x00;
+				   if (mSwitchState) {
+					   newByteState=0x01;
+				   }
+			       if (Constant.DEBUG) Log.i("JMG","State Write State" + Byte.toString(newByteState));
+		   	       mTumakuBLE.write(TumakuBLE.TETHERCELL_SERVICE,TumakuBLE.TETHERCELL_STATE, new byte[]{newByteState});
+				   break;
+
+			   case(WSTATE_WRITE_PERIOD):
+			       if (Constant.DEBUG) Log.i("JMG","State Write Period");
+		   	       mTumakuBLE.write(TumakuBLE.TETHERCELL_SERVICE,TumakuBLE.TETHERCELL_PERIOD, new byte[]{0x20,0x03});  //Set advertising interval to 0,5 seconds
+		   	       //mTumakuBLE.write(TumakuBLE.TETHERCELL_SERVICE,TumakuBLE.TETHERCELL_PERIOD, new byte[]{0x40,0x06}); //Set advertising interval to 1 second
+				   break;
+
+			   case(WSTATE_WRITE_UTC):
+			       if (Constant.DEBUG) Log.i("JMG","State Write UTC");
+		   	       mTumakuBLE.write(TumakuBLE.TETHERCELL_SERVICE,TumakuBLE.TETHERCELL_UTC, new byte[]{0x05,0x00,0x00,0x00}); //5 seconds
+				   break;
+
+			   case(WSTATE_WRITE_TIMER_INDEX):
+			       if (Constant.DEBUG) Log.i("JMG","State Write Timer Index");
+		   	       mTumakuBLE.write(TumakuBLE.TETHERCELL_SERVICE,TumakuBLE.TETHERCELL_TIMER_ARRAY_INDEX, new byte[]{mTimerIndex}); // timer index 2 (third one since index starts at 0)
+				   break;
+
+			   case(WSTATE_WRITE_TIMER):
+			       if (Constant.DEBUG) Log.i("JMG","State Write Timer");
+		   	       mTumakuBLE.write(TumakuBLE.TETHERCELL_SERVICE,TumakuBLE.TETHERCELL_TIMER_ARRAY, mTimerValue); // timer index 2 (third one since index starts at 0)
+				   break;
+
 			   default:
 				   
 			}			
@@ -359,6 +476,18 @@ public class TethercellActivity extends Activity {
         	   }
         	   if (mState==WSTATE_READ_UTC) {
         		   mTextUtc.setText(readValue);
+        		   mState=WSTATE_READ_TIMER_INDEX;
+        		   nextState();
+        		   return;
+        	   }
+        	   if (mState==WSTATE_READ_TIMER_INDEX) {
+        		   mTextTimerIndex.setText(readValue);
+        		   mState=WSTATE_READ_TIMER;
+        		   nextState();
+        		   return;
+        	   }
+        	   if (mState==WSTATE_READ_TIMER) {
+        		   mTextTimer.setText(readValue);
         		   mState=WSTATE_DUMMY;
         		   nextState();
         		   return;
@@ -375,9 +504,34 @@ public class TethercellActivity extends Activity {
         		   return;
         	   }    
 	           if (mState==WSTATE_TOGGLE_STATE) {
-	        		   mState=WSTATE_READ_VOLTAGE;
-	        		   nextState();
-	        		   return;
+        		   mState=WSTATE_READ_VOLTAGE;
+        		   nextState();
+        		   return;
+	           }        	   
+	           if (mState==WSTATE_WRITE_STATE) {
+        		   mState=WSTATE_WRITE_PERIOD;
+        		   nextState();
+        		   return;
+	           }        	   
+	           if (mState==WSTATE_WRITE_PERIOD) {
+        		   mState=WSTATE_WRITE_UTC;
+        		   nextState();
+        		   return;
+	           }        	   
+	           if (mState==WSTATE_WRITE_UTC) {
+        		   mState=WSTATE_WRITE_TIMER_INDEX;
+        		   nextState();
+        		   return;
+	           }        	   
+	           if (mState==WSTATE_WRITE_TIMER_INDEX) {
+        		   mState=WSTATE_WRITE_TIMER;
+        		   nextState();
+        		   return;
+	           }        	   
+	           if (mState==WSTATE_WRITE_TIMER) {
+        		   mState=WSTATE_READ_VOLTAGE;
+        		   nextState();
+        		   return;
 	           }        	   
                return;
            }                

@@ -28,7 +28,6 @@
 
 package com.tumaku.msmble;
 
-import static java.util.UUID.fromString;
 
 import static java.lang.Math.pow;
 
@@ -110,6 +109,8 @@ public class TumakuBLE {
     public static final String TETHERCELL_STATE = "5ec0fff2-3cf2-a682-e211-2af96efdf667";
     public static final String TETHERCELL_UTC = "5ec0fffa-3cf2-a682-e211-2af96efdf667";
     public static final String TETHERCELL_PERIOD = "5ec0fffb-3cf2-a682-e211-2af96efdf667";
+    public static final String TETHERCELL_TIMER_ARRAY = "5ec0fff4-3cf2-a682-e211-2af96efdf667";
+    public static final String TETHERCELL_TIMER_ARRAY_INDEX = "5ec0fff5-3cf2-a682-e211-2af96efdf667";
 	
 	
 	private static BluetoothDevice mDevice;
@@ -442,7 +443,6 @@ public class TumakuBLE {
 		@Override
 		public void onCharacteristicRead(BluetoothGatt gatt,
 				BluetoothGattCharacteristic characteristic, int status) {
-			// TODO Auto-generated method stub
 			super.onCharacteristicRead(gatt, characteristic, status);
 			if(Constant.DEBUG) {
 				if(status==0){
@@ -463,7 +463,6 @@ public class TumakuBLE {
 		public void onCharacteristicChanged(BluetoothGatt gatt,
 				BluetoothGattCharacteristic characteristic) {
 			super.onCharacteristicChanged(gatt, characteristic);
-			String uuid = characteristic.getUuid().toString();
 			if(Constant.DEBUG){
 				//Log.i("JMG", "NOTIFICATION onCharacteristicChanged for characteristic " + uuid + 
 				//		" value: " + bytesToString(characteristic.getValue()));
@@ -504,7 +503,6 @@ public class TumakuBLE {
 		@Override
 		public void onDescriptorWrite(BluetoothGatt gatt,
 				BluetoothGattDescriptor descriptor, int status) {
-			// TODO Auto-generated method stub
 			super.onDescriptorWrite(gatt, descriptor, status);
 			if(Constant.DEBUG)
 				Log.i("JMG", "onDescriptorWrite "+ descriptor.getUuid().toString() + " - characteristic: " + 
