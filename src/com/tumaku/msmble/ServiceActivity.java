@@ -108,7 +108,11 @@ public class ServiceActivity extends ListActivity
 	    	} else {
 		    	if ((selectedCharacteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_AUTH_PIN))||
 		    		(selectedCharacteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_VOLTAGE))||
-		    		(selectedCharacteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_STATE))) {
+			    	(selectedCharacteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_STATE))||
+			    	(selectedCharacteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_UTC))||
+			    	(selectedCharacteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_PERIOD))||
+			    	(selectedCharacteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_TIMER_ARRAY))||
+		    		(selectedCharacteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_TIMER_ARRAY_INDEX))) {
 				    if (Constant.DEBUG) Log.i("JMG", "Tethercell Characteristic selected. Launch Tethercell activity");
 			    	Intent intentActivity= new Intent(mContext, TethercellActivity.class);
 			    	intentActivity.putExtra(TumakuBLE.EXTRA_ADDRESS,mTumakuBLE.getDeviceAddress());
@@ -148,6 +152,10 @@ public class ServiceActivity extends ListActivity
   	    if (characteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_AUTH_PIN)) rowView.setBackgroundColor(Color.BLUE);
   	    if (characteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_VOLTAGE)) rowView.setBackgroundColor(Color.BLUE);
   	    if (characteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_STATE)) rowView.setBackgroundColor(Color.BLUE);
+  	    if (characteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_UTC)) rowView.setBackgroundColor(Color.BLUE);
+  	    if (characteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_PERIOD)) rowView.setBackgroundColor(Color.BLUE);
+  	    if (characteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_TIMER_ARRAY)) rowView.setBackgroundColor(Color.BLUE);
+  	    if (characteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_TIMER_ARRAY_INDEX)) rowView.setBackgroundColor(Color.BLUE);
   	    return rowView;
   	  }
   	} 
