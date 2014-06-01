@@ -11,3 +11,5 @@ http://www.yeelight.com/en_US/info/download
 Based on the code created by Dave Smith (Double Encore) distributed under MIT Open Source License
 https://github.com/devunwired/accessory-samples/tree/master/BluetoothGatt
 http://www.doubleencore.com/2013/12/bluetooth-smart-for-android/
+
+Special thanks to @jgalaron and @@jjimenef fot their contribution to understand the behaviour of the HM10 module
