@@ -8,6 +8,7 @@
     <string name="green">Green</string>
     <string name="blue">Blue</string>
     <string name="read">Read</string>
+    <string name="send">Send</string>
     <string name="reset">Reset</string>
     <string name="reconnect">Reconnect</string>
     <string name="intensity">Intensity</string>
@@ -23,6 +24,7 @@
     <string name="sensortag">sensortag</string>
     <string name="monitorSensorTag">Monitor SensorTag</string>
     <string name="monitorTethercell">Monitor Tethercell</string>
+    <string name="monitorHM10">Monitor HM10</string>
     <string name="voltageTag">Voltage (mV): </string>
     <string name="stateTag">State: </string>
     <string name="periodTag">Advertising Period (msec): </string>
@@ -33,5 +35,7 @@
     <string name="repeat_in_minutes">Repeat</string>
     <string name="values_in_minutes">(Values in minutes)</string>
     <string name="setTimer">Set Timer</string>
+    <string name="receivedText">Received Text:</string>
+    <string name="sentText">Text to send:</string>
     
 </resources>

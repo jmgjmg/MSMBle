@@ -49,7 +49,11 @@
             android:name="com.tumaku.msmble.TethercellActivity"
             android:label="@string/monitorTethercell" >
          </activity>        
-        <receiver android:name=".MessageReceiver" android:enabled="true" >
+         <activity
+            android:name="com.tumaku.msmble.HM10Activity"
+            android:label="@string/monitorHM10" >
+         </activity>        
+         <receiver android:name=".MessageReceiver" android:enabled="true" >
             <intent-filter>
                 <action android:name="com.yeelight.DEVICE_FOUND"></action>
             </intent-filter>

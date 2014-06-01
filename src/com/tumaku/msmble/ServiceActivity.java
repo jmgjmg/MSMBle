@@ -99,8 +99,7 @@ public class ServiceActivity extends ListActivity
 	    	if ((selectedCharacteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_HUMIDITY_CONF))||
 		    	  (selectedCharacteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_HUMIDITY_DATA))||
 		    	  (selectedCharacteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_IR_TEMPERATURE_DATA))||
-		    	  (selectedCharacteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_IR_TEMPERATURE_CONF))||
-	    	  (selectedCharacteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_KEY_DATA))) {
+		    	  (selectedCharacteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_IR_TEMPERATURE_CONF))) {
 			    if (Constant.DEBUG) Log.i("JMG", "SensorTag Characteristic selected. Launch SensorTag activity");
 		    	Intent intentActivity= new Intent(mContext, SensorTagActivity.class);
 		    	intentActivity.putExtra(TumakuBLE.EXTRA_ADDRESS,mTumakuBLE.getDeviceAddress());
@@ -116,9 +115,16 @@ public class ServiceActivity extends ListActivity
 				    if (Constant.DEBUG) Log.i("JMG", "Tethercell Characteristic selected. Launch Tethercell activity");
 			    	Intent intentActivity= new Intent(mContext, TethercellActivity.class);
 			    	intentActivity.putExtra(TumakuBLE.EXTRA_ADDRESS,mTumakuBLE.getDeviceAddress());
-			    	mContext.startActivity(intentActivity);	   	    		
+			    	mContext.startActivity(intentActivity);	 
 		    	} else {
+		    	   if (selectedCharacteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_KEY_DATA)) {
+					    if (Constant.DEBUG) Log.i("JMG", "HM10 Serial Pass Through Characteristic selected. Launch HM10 activity");
+				    	Intent intentActivity= new Intent(mContext, HM10Activity.class);
+				    	intentActivity.putExtra(TumakuBLE.EXTRA_ADDRESS,mTumakuBLE.getDeviceAddress());
+				    	mContext.startActivity(intentActivity);	 		    		   
+		    	   } else {
 		    		Toast.makeText(this, "No management window defined for characteristic " + mCharacteristicList.get(position), Toast.LENGTH_SHORT).show();  
+		    	   }
 		    	}
 	    	}
 	    }
@@ -146,7 +152,7 @@ public class ServiceActivity extends ListActivity
   	    if (characteristic.equalsIgnoreCase(TumakuBLE.CHARACTERISTIC_CONTROL)) rowView.setBackgroundColor(Color.GREEN);
   	    if (characteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_HUMIDITY_DATA)) rowView.setBackgroundColor(Color.RED);
   	    if (characteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_HUMIDITY_CONF)) rowView.setBackgroundColor(Color.RED);
-  	    if (characteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_KEY_DATA)) rowView.setBackgroundColor(Color.RED);
+  	    if (characteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_KEY_DATA)) rowView.setBackgroundColor(Color.YELLOW);
   	    if (characteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_IR_TEMPERATURE_DATA)) rowView.setBackgroundColor(Color.RED);
   	    if (characteristic.equalsIgnoreCase(TumakuBLE.SENSORTAG_IR_TEMPERATURE_CONF)) rowView.setBackgroundColor(Color.RED);
   	    if (characteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_AUTH_PIN)) rowView.setBackgroundColor(Color.BLUE);
