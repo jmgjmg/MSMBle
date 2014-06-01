@@ -18,6 +18,8 @@ and humidity from the SensorTag.
 
 If Tethercell service is found, an activity can be launched to change the state (OFF/ON) of the Tethercell battery and visualise its characterisctics
 
+If HM10 service is found, an activity can be launched to connect to the HM10 and simulate a Serial connection to the module. An arduino skecth is included in the repository to show how HM10 module works. 
+
 This application has been tested on a Google Nexus 7 (2013 edition)
 
 Free aplication available for download from Google Play: 
