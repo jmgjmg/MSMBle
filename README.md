@@ -20,6 +20,12 @@ If Tethercell service is found, an activity can be launched to change the state 
 
 If HM10 service is found, an activity can be launched to connect to the HM10 and simulate a Serial connection to the module. An arduino skecth is included in the repository to show how HM10 module works. 
 
+If BLEDduino UART service is found, an activity can be launched to connect to the BLEduino  and simulate a Serial connection to the module. You will need to upload BLEduino "Console Demo" sketch. 
++ upload "Console demo" sketch to BLEduino http://bleduino.cc/start/examples/1
++ reset BLEduino with onboard Reset button
++ open Arduino IDE console (this must be done after pressing the BLEduino reset button!)
++ start BLE scanning from MSMSBLE Android app and select BLEduino device, UART service (shown in blue) and UART characteristics (also in blue).
+
 This application has been tested on a Google Nexus 7 (2013 edition)
 
 Free aplication available for download from Google Play: 
