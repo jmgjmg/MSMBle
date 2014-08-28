@@ -259,6 +259,7 @@ public class DeviceActivity extends ListActivity
   	    if (serviceUUID.equalsIgnoreCase(TumakuBLE.SENSORTAG_KEY_SERVICE)) rowView.setBackgroundColor(Color.YELLOW);
   	    if (serviceUUID.equalsIgnoreCase(TumakuBLE.SENSORTAG_IR_TEMPERATURE_SERVICE)) rowView.setBackgroundColor(Color.RED);
   	    if (serviceUUID.equalsIgnoreCase(TumakuBLE.TETHERCELL_SERVICE)) rowView.setBackgroundColor(Color.BLUE);
+  	    if (serviceUUID.equalsIgnoreCase(TumakuBLE.BLEDUINO_UART_SERVICE)) rowView.setBackgroundColor(Color.BLUE);
 
   	    serviceText.setTypeface(null, Typeface.BOLD);
   	  	String characteristicsString ="";

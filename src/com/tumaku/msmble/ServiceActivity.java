@@ -123,7 +123,14 @@ public class ServiceActivity extends ListActivity
 				    	intentActivity.putExtra(TumakuBLE.EXTRA_ADDRESS,mTumakuBLE.getDeviceAddress());
 				    	mContext.startActivity(intentActivity);	 		    		   
 		    	   } else {
-		    		Toast.makeText(this, "No management window defined for characteristic " + mCharacteristicList.get(position), Toast.LENGTH_SHORT).show();  
+		    			  if ((selectedCharacteristic.equalsIgnoreCase(TumakuBLE.BLEDUINO_UART_RX))||
+				   		    		(selectedCharacteristic.equalsIgnoreCase(TumakuBLE.BLEDUINO_UART_TX))) {
+				   				    if (Constant.DEBUG) Log.i("JMG", "BLEduino UART Characteristic selected. Launch BLEduino UART activity");
+				   			    	Intent intentActivity= new Intent(mContext, BLEduinoUartActivity.class);
+				   			    	intentActivity.putExtra(TumakuBLE.EXTRA_ADDRESS,mTumakuBLE.getDeviceAddress());
+				   			    	mContext.startActivity(intentActivity);	 
+		    			  } else
+		    				  Toast.makeText(this, "No management window defined for characteristic " + mCharacteristicList.get(position), Toast.LENGTH_SHORT).show();  
 		    	   }
 		    	}
 	    	}
@@ -162,6 +169,9 @@ public class ServiceActivity extends ListActivity
   	    if (characteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_PERIOD)) rowView.setBackgroundColor(Color.BLUE);
   	    if (characteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_TIMER_ARRAY)) rowView.setBackgroundColor(Color.BLUE);
   	    if (characteristic.equalsIgnoreCase(TumakuBLE.TETHERCELL_TIMER_ARRAY_INDEX)) rowView.setBackgroundColor(Color.BLUE);
+
+  	    if (characteristic.equalsIgnoreCase(TumakuBLE.BLEDUINO_UART_RX)) rowView.setBackgroundColor(Color.BLUE);
+  	    if (characteristic.equalsIgnoreCase(TumakuBLE.BLEDUINO_UART_TX)) rowView.setBackgroundColor(Color.BLUE);
   	    return rowView;
   	  }
   	} 

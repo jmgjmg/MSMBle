@@ -111,8 +111,12 @@ public class TumakuBLE {
     public static final String TETHERCELL_PERIOD = "5ec0fffb-3cf2-a682-e211-2af96efdf667";
     public static final String TETHERCELL_TIMER_ARRAY = "5ec0fff4-3cf2-a682-e211-2af96efdf667";
     public static final String TETHERCELL_TIMER_ARRAY_INDEX = "5ec0fff5-3cf2-a682-e211-2af96efdf667";
-	
-	
+
+    public static final String BLEDUINO_UART_SERVICE = "8C6BDA7A-A312-681D-025B-0032C0D16A2D";
+    public static final String BLEDUINO_UART_TX = "8C6B1010-A312-681D-025B-0032C0D16A2D";
+    public static final String BLEDUINO_UART_RX = "8C6BABCD-A312-681D-025B-0032C0D16A2D";
+
+    
 	private static BluetoothDevice mDevice;
 	
 	private static String mDeviceAddress;
@@ -278,6 +282,27 @@ public class TumakuBLE {
 		    }
 		    mGatt.writeDescriptor(config); //Enabled remotely		    
 			if(Constant.DEBUG) Log.i("JMG","Write Characteristic Notification " + characteristicUUID + " with value " + notificationFlag);
+		} else {
+			if(Constant.DEBUG) Log.i("JMG","Write Characteristic not found in device");
+		}
+
+	    
+	    
+	}	
+	
+	public void enableIndications(String serviceUUID, String characteristicUUID, boolean indicationFlag) {
+		BluetoothGattCharacteristic characteristic = findCharacteristic(serviceUUID, characteristicUUID);	
+		if(characteristic!=null){
+		    UUID CCC = UUID.fromString(CONFIG_DESCRIPTOR);
+		    mGatt.setCharacteristicNotification(characteristic, indicationFlag); //Enabled locally
+		    BluetoothGattDescriptor config = characteristic.getDescriptor(CCC);
+		    if (indicationFlag) {
+			    config.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);	    	
+		    } else {
+			    config.setValue(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE);	    	
+		    }
+		    mGatt.writeDescriptor(config); //Enabled remotely		    
+			if(Constant.DEBUG) Log.i("JMG","Write Characteristic Notification " + characteristicUUID + " with value " + indicationFlag);
 		} else {
 			if(Constant.DEBUG) Log.i("JMG","Write Characteristic not found in device");
 		}
@@ -513,27 +538,4 @@ public class TumakuBLE {
 		}
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }

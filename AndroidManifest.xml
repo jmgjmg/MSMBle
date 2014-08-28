@@ -52,6 +52,10 @@
          <activity
             android:name="com.tumaku.msmble.HM10Activity"
             android:label="@string/monitorHM10" >
+         </activity>          
+         <activity
+            android:name="com.tumaku.msmble.BLEduinoUartActivity"
+            android:label="@string/monitorBLEduinoUart" >
          </activity>        
          <receiver android:name=".MessageReceiver" android:enabled="true" >
             <intent-filter>

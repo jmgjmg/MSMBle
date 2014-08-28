@@ -25,6 +25,8 @@
     <string name="monitorSensorTag">Monitor SensorTag</string>
     <string name="monitorTethercell">Monitor Tethercell</string>
     <string name="monitorHM10">Monitor HM10</string>
+    <string name="monitorRadiation">Monitor Radiation</string>
+    <string name="monitorBLEduinoUart">Monitor BLEduino UART</string>
     <string name="voltageTag">Voltage (mV): </string>
     <string name="stateTag">State: </string>
     <string name="periodTag">Advertising Period (msec): </string>
@@ -37,5 +39,5 @@
     <string name="setTimer">Set Timer</string>
     <string name="receivedText">Received Text:</string>
     <string name="sentText">Text to send:</string>
-    
+
 </resources>
